@@ -1,4 +1,5 @@
 import string
+import numpy as np
 
 def generate_letter_cofrequency_matrices(words):
         """
