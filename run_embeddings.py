@@ -509,7 +509,7 @@ class HangmanGame:
                             if letter not in self.guessed_letters and letter not in window:
                                 letter_scores[letter][6] += quadgrams_by_frequency.index(quadgram) + 1
 
-        output_file_path = f'embeddings/{word.replace(".", "_")} ~ {self.secret_word}.txt'
+        output_file_path = f'embeddings_val/{word.replace(".", "_")} ~ {self.secret_word}.txt'
         with open(output_file_path, 'w') as f:
             for letter, scores in letter_scores.items():
                 f.write(f"{letter}: {scores}\n")
@@ -628,7 +628,7 @@ game = HangmanGame()
 game.start_game(secret_word='welder')
 
 
-with open("words_train_split.txt", "r") as file:
+with open("words_val_split.txt", "r") as file:
         words = file.read().splitlines()
 
 for i, word in enumerate(words):
