@@ -68,7 +68,11 @@ def train_multiclass_hamming_classifier(X_train, y_train, X_val=None, y_val=None
     # Move to specified device
     X_train = X_train.to(device)
     y_train = y_train.to(device)
-    
+
+    X_val = X_val.to(device)
+    y_val = y_val.to(device)
+
+                                             
     # Initialize model, loss, and optimizer
     model = MulticlassHammingClassifier(input_dim, num_classes).to(device)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
