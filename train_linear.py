@@ -91,6 +91,8 @@ def train_multiclass_hamming_classifier(X_train, y_train, X_val=None, y_val=None
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
         
         epoch_loss = 0
+
+        print('meow', model.linear.weight, model.linear, model.linear.bias)
         
         for batch_x, batch_y in dataloader:
             # Forward pass
