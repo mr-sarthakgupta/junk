@@ -43,7 +43,7 @@ def hamming_loss(y_true, y_pred, threshold=0.5):
 def train_multiclass_hamming_classifier(X_train, y_train, X_val=None, y_val=None, 
                                          input_dim=(26, 6), num_classes=26, 
                                          learning_rate=0.01, epochs=100, 
-                                         batch_size=32, device='cpu'):
+                                         batch_size=32, device='cuda:0'):
     """
     Train a multiclass classification model with Hamming loss
     
