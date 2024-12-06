@@ -408,7 +408,7 @@ game = HangmanGame()
 game.start_game(secret_word='welder')
 
 
-with open("words_val_split.txt", "r") as file:
+with open("words_train_split.txt", "r") as file:
         words = file.read().splitlines()
 
 for i, word in enumerate(words):
