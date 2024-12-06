@@ -137,7 +137,7 @@ most_common_qgrams = [qgram for qgram, count in most_common_qgrams]
 class HangmanGame:
     def __init__(self, full_dictionary_location='words_train_split.txt'):
 
-        self.xgboost = pickle.load(open('xgboost_1014319.pkl', "rb"))
+        # self.xgboost = pickle.load(open('xgboost_1014319.pkl', "rb"))
 
         self.guessed_letters = []
 
