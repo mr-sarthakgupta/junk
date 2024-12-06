@@ -270,7 +270,7 @@ class HangmanGame:
 
         input = np.array([sum(letter_scores[letter]) if letter in letter_scores.keys() else -1000*7 for letter in string.ascii_lowercase])
 
-        output_file_path = f'embeddings_train/{word.replace(".", "_")} ~ {self.secret_word}.txt'
+        output_file_path = f'embeddings_val_new/{word.replace(".", "_")} ~ {self.secret_word}.txt'
         with open(output_file_path, 'w') as f:
             for letter, scores in letter_scores.items():
                 f.write(f"{letter}: {scores}\n")
