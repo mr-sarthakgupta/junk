@@ -73,9 +73,71 @@ import re
 import collections
 import os
 import json
+import pickle
+import xgboost as xgb
+
+
+from collections import Counter
+
+
+
+# Join all the words in the training set into a single string
+all_letters = ''.join(words)
+
+# Count the frequency of each letter
+letter_counts = Counter(all_letters)
+
+# Sort the letters by frequency in decreasing order
+sorted_letters_by_frequency = sorted(letter_counts.items(), key=lambda item: item[1], reverse=True)
+
+# Extract just the letters in sorted order
+sorted_letters = [letter for letter, count in sorted_letters_by_frequency]
+
+
+with open("words_train_split.txt", "r") as file:
+    words_split = file.read().splitlines()
+
+# Generate bigrams from the words
+bigrams = [word[i:i+2] for word in words_split for i in range(len(word) - 1)]
+
+# Count the frequency of each bigram
+bigram_counts = Counter(bigrams)
+
+# Get the 100 most common bigrams
+most_common_bigrams = bigram_counts.most_common(len(bigram_counts))
+
+most_common_bigrams = [bigram for bigram, count in most_common_bigrams]
+
+
+
+trigrams = [word[i:i+3] for word in words_split for i in range(len(word) - 3)]
+
+# Count the frequency of each bigram
+trigram_counts = Counter(trigrams)
+
+# Get the 100 most common bigrams
+most_common_trigrams = trigram_counts.most_common(len(trigram_counts))
+
+most_common_trigrams = [trigram for trigram, count in most_common_trigrams]
+
+
+
+
+qgrams = [word[i:i+4] for word in words_split for i in range(len(word) - 4)]
+
+# Count the frequency of each bigram
+qgram_counts = Counter(qgrams)
+
+# Get the 100 most common bigrams
+most_common_qgrams = qgram_counts.most_common(len(qgram_counts))
+
+most_common_qgrams = [qgram for qgram, count in most_common_qgrams]
+
 
 class HangmanGame:
     def __init__(self, full_dictionary_location='words_train_split.txt'):
+
+        self.xgboost = pickle.load(open('xgboost_1014319.pkl', "rb"))
 
         self.guessed_letters = []
 
@@ -121,310 +183,20 @@ class HangmanGame:
                                 'x',
                                 'q',
                                 'j']
-        
-        bigrams_by_frequency = ['er',
- 'in',
- 'ti',
- 'on',
- 'es',
- 'te',
- 'an',
- 're',
- 'at',
- 'al',
- 'en',
- 'ed',
- 'le',
- 'ri',
- 'is',
- 'ra',
- 'ic',
- 'st',
- 'ar',
- 'ne',
- 'ng',
- 'li',
- 'ro',
- 'or',
- 'nt',
- 'la',
- 'un',
- 'it',
- 'co',
- 'el',
- 'de',
- 'se',
- 'll',
- 'ni',
- 'ca',
- 'to',
- 'ta',
- 'ss',
- 'io',
- 'ma',
- 'ch',
- 'ou',
- 'ia',
- 'he',
- 'lo',
- 'tr',
- 'us',
- 'no',
- 'si',
- 'ly',
- 'me',
- 'di',
- 'na',
- 'ol',
- 'et',
- 've',
- 'il',
- 'as',
- 'ac',
- 'mi',
- 'th',
- 'ea',
- 'pe',
- 'nd',
- 'ha',
- 'om',
- 'ce',
- 'os',
- 'hi',
- 'ph',
- 'ho',
- 'ur',
- 'pr',
- 'ns',
- 'id',
- 'ie',
- 'op',
- 'ul',
- 'nc',
- 'ec',
- 'ot',
- 'sh',
- 'ge',
- 'mo',
- 'pa',
- 'em',
- 'ab',
- 'po',
- 'bl',
- 'am',
- 'rs',
- 'ci',
- 'ad',
- 'pi',
- 'oc',
- 'ap',
- 'be',
- 'su',
- 'og',
- 'sa']
-        
-        trigrams_by_frequency = ['ati',
- 'tio',
- 'nes',
- 'ter',
- 'ica',
- 'all',
- 'ent',
- 'tin',
- 'non',
- 'per',
- 'eri',
- 'ver',
- 'ant',
- 'ate',
- 'abl',
- 'ali',
- 'pre',
- 'tra',
- 'lin',
- 'ing',
- 'con',
- 'nte',
- 'pro',
- 'sti',
- 'ion',
- 'nti',
- 'ste',
- 'tri',
- 'rat',
- 'ell',
- 'oni',
- 'nde',
- 'ist',
- 'res',
- 'rin',
- 'the',
- 'ari',
- 'ine',
- 'ene',
- 'ill',
- 'lat',
- 'ove',
- 'iti',
- 'lit',
- 'str',
- 'ere',
- 'ran',
- 'tic',
- 'cal',
- 'int',
- 'men',
- 'era',
- 'gra',
- 'ili',
- 'min',
- 'dis',
- 'olo',
- 'ast',
- 'ona',
- 'tro',
- 'est',
- 'ani',
- 'mat',
- 'chi',
- 'ero',
- 'sta',
- 'der',
- 'ato',
- 'and',
- 'tiv',
- 'oph',
- 'ect',
- 'her',
- 'che',
- 'und',
- 'ina',
- 'tor',
- 'for',
- 'nat',
- 'log',
- 'rea',
- 'pho',
- 'cti',
- 'ess',
- 'ori',
- 'emi',
- 'nis',
- 'cat',
- 'lli',
- 'cha',
- 'sto',
- 'ous',
- 'lis',
- 'rop',
- 'ula',
- 'par',
- 'ele',
- 'eli',
- 'les',
- 'ers']
+        letters_by_frequency = letters_by_frequency[::-1]
 
-        quadgrams_by_frequency = ['atio',
- 'over',
- 'tion',
- 'nter',
- 'ical',
- 'enes',
- 'inte',
- 'call',
- 'olog',
- 'anti',
- 'tica',
- 'atin',
- 'unde',
- 'nder',
- 'rati',
- 'logi',
- 'ingl',
- 'grap',
- 'iona',
- 'ogra',
- 'ilit',
- 'isti',
- 'ther',
- 'bili',
- 'alis',
- 'ativ',
- 'enti',
- 'uper',
- 'ster',
- 'icat',
- 'lati',
- 'mati',
- 'teri',
- 'raph',
- 'supe',
- 'ment',
- 'ines',
- 'erin',
- 'ulat',
- 'stra',
- 'enta',
- 'erat',
- 'self',
- 'tati',
- 'esse',
- 'semi',
- 'snes',
- 'ight',
- 'dnes',
- 'peri',
- 'inat',
- 'pres',
- 'tran',
- 'aliz',
- 'cula',
- 'stic',
- 'tric',
- 'comp',
- 'omet',
- 'tive',
- 'ctio',
- 'vill',
- 'well',
- 'lene',
- 'tabl',
- 'ator',
- 'ecti',
- 'abil',
- 'cati',
- 'ousl',
- 'blen',
- 'nati',
- 'emen',
- 'opho',
- 'acti',
- 'able',
- 'para',
- 'lect',
- 'edne',
- 'vers',
- 'izat',
- 'cont',
- 'cons',
- 'zati',
- 'usne',
- 'asti',
- 'ousn',
- 'tero',
- 'izin',
- 'onis',
- 'anth',
- 'late',
- 'ogen',
- 'anis',
- 'rica',
- 'othe',
- 'trop',
- 'reco',
- 'elli',
- 'arch']
-        
+        bigrams_by_frequency = most_common_bigrams
+        bigrams_by_frequency = bigrams_by_frequency[::-1] 
+
+
+        trigrams_by_frequency = most_common_trigrams
+        trigrams_by_frequency = trigrams_by_frequency[::-1]
+
+
+        quadgrams_by_frequency = most_common_qgrams        
+        quadgrams_by_frequency = quadgrams_by_frequency[::-1]
+
+
         # Clean the word, stripping spaces and replacing "_" with placeholders
         clean_word = word[::2].replace("_", ".")
     
@@ -434,7 +206,11 @@ class HangmanGame:
         # 1. Single Letter Frequency - Initial Base Score
         for letter in letters_by_frequency:
             if letter not in self.guessed_letters:
-                letter_scores[letter] = [0]*7
+                letter_scores[letter] = [0]*6
+
+        for letter in letters_by_frequency:
+            if letter not in self.guessed_letters:
+                letter_scores[letter][0] += letters_by_frequency.index(letter) + 1
 
         # 2. Bigram and  Scoring with Contextual Constraint
         for i in range(len(clean_word) - 1):
@@ -450,17 +226,8 @@ class HangmanGame:
                     if self.is_bigram_window_match(window, bigram):
                         for letter in set(bigram):
                             if letter not in self.guessed_letters and letter not in window:
-                                letter_scores[letter][0] += bigrams_by_frequency.index(bigram) + 1
-                
-                if window[0] == '.':
-                    for letter in letters_by_frequency:
-                        if letter not in self.guessed_letters and letter not in window:
-                            letter_scores[letter][1] += list(np.argsort(-1*preceding_matrix[self.alphabet.index(window[1]), :])).index(self.alphabet.index(letter)) + 1
-                if window[1] == '.':
-                    for letter in letters_by_frequency:
-                        if letter not in self.guessed_letters and letter not in window:
-                            letter_scores[letter][2] += list(np.argsort(-1*preceding_matrix[self.alphabet.index(window[0]), :])).index(self.alphabet.index(letter)) + 1
-                                    
+                                letter_scores[letter][1] += bigrams_by_frequency.index(bigram) + 1
+                                        
         
         # 3. Trigram Scoring with Contextual Constraint
         for i in range(len(clean_word) - 2):
@@ -471,20 +238,13 @@ class HangmanGame:
             known_letters_count = sum(1 for char in window if char != '.')
             
             # Only apply trigram scoring if 2 or more letters are known
-            if known_letters_count >= 1:
-                for trigram in trigrams_by_frequency:
-                    if self.is_trigram_window_match(window, trigram):
-                        for letter in set(trigram):
-                            if letter not in self.guessed_letters and letter not in window:
-                                letter_scores[letter][3] += trigrams_by_frequency.index(trigram) + 1
-        
             if known_letters_count >= 2:
                 for trigram in trigrams_by_frequency:
                     if self.is_trigram_window_match(window, trigram):
                         for letter in set(trigram):
                             if letter not in self.guessed_letters and letter not in window:
-                                letter_scores[letter][4] += trigrams_by_frequency.index(trigram) + 1
-
+                                letter_scores[letter][2] += trigrams_by_frequency.index(trigram) + 1
+    
         # 4. Quadgram Scoring with Contextual Constraint
         for i in range(len(clean_word) - 3):
             # Extract 4-letter window
@@ -494,36 +254,56 @@ class HangmanGame:
             known_letters_count = sum(1 for char in window if char != '.')
             
             # Only apply quadgram scoring if 2 or more letters are known
-            if known_letters_count >= 2:
-                for quadgram in quadgrams_by_frequency:
-                    if self.is_quadgram_window_match(window, quadgram):
-                        for letter in set(quadgram):
-                            if letter not in self.guessed_letters and letter not in window:
-                                letter_scores[letter][5] += quadgrams_by_frequency.index(quadgram) + 1
-
-
             if known_letters_count >= 3:
                 for quadgram in quadgrams_by_frequency:
                     if self.is_quadgram_window_match(window, quadgram):
                         for letter in set(quadgram):
                             if letter not in self.guessed_letters and letter not in window:
-                                letter_scores[letter][6] += quadgrams_by_frequency.index(quadgram) + 1
+                                letter_scores[letter][3] += quadgrams_by_frequency.index(quadgram) + 1
 
-        output_file_path = f'embeddings_val/{word.replace(".", "_")} ~ {self.secret_word}.txt'
-        with open(output_file_path, 'w') as f:
-            for letter, scores in letter_scores.items():
-                f.write(f"{letter}: {scores}\n")
         
         # Fallback to most frequent unguessed letters
         if not letter_scores:
             for letter in letters_by_frequency:
                 if letter not in self.guessed_letters:
                     return letter
+
+        input = np.array([sum(letter_scores[letter]) if letter in letter_scores.keys() else -1000*7 for letter in string.ascii_lowercase])
+
+        output_file_path = f'embeddings_train/{word.replace(".", "_")} ~ {self.secret_word}.txt'
+        with open(output_file_path, 'w') as f:
+            for letter, scores in letter_scores.items():
+                f.write(f"{letter}: {scores}\n")
         
-        # Select letter with highest score
-        guess_letter = max(letter_scores, key=letter_scores.get)
-        
+        print(input)
+
+        guess_letter = string.ascii_lowercase[np.argmax(input)]
+
+        # if clean_word == '.'*len(clean_word) and 'e' not in self.guessed_letters:
+        #     guess_letter = 'e'
+        # else:
+        #     output = self.predict_multilabel(models = self.xgboost, X_test = np.expand_dims(input, axis=0), n_classes = n_classes, threshold=0.5).squeeze().argsort()
+        #     output = output[::-1]
+        #     # guess_letter = string.ascii_lowercase[output[i]]
+        #     for i in range(26):
+        #         if string.ascii_lowercase[output[i]] not in self.guessed_letters:
+        #             guess_letter = string.ascii_lowercase[output[i]]
+        #             break
+
+        # print(f"Guessed letter: {guess_letter}, rank: {i + 1}, score: {sum(letter_scores[guess_letter])}")
+            
         return guess_letter
+    
+    def predict_multilabel(self, models, X_test, n_classes, threshold=0.5):
+        # Predict probabilities for each label
+        preds_proba = np.column_stack([
+            model.predict(xgb.DMatrix(X_test)) for model in models
+        ])
+        
+        # Convert probabilities to binary predictions
+        preds_bin = (preds_proba >= threshold).astype(int)
+        
+        return preds_bin
     
     def is_bigram_window_match(self, window, bigram):
         """
