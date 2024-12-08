@@ -38,8 +38,8 @@ def hamming_loss(y_true, y_pred, threshold=0.5):
     return torch.mean(incorrect_predictions)
 
 def train_multiclass_hamming_classifier(X_train, y_train, X_val=None, y_val=None, 
-                                         input_dim=6, num_classes=26, 
-                                         learning_rate=0.005, epochs=100, 
+                                         input_dim=26*6, num_classes=26, 
+                                         learning_rate=0.0005, epochs=100, 
                                          batch_size=8192, device='cuda:0'):
     """
     Train a multiclass classification model with Hamming loss
@@ -156,14 +156,22 @@ if __name__ == '__main__':
                     sample.append([-1000, -1000, -1000, -1000, -1000, -1000])
             X.append(sample)
             # print(file_name)
-            y.append([1 if string.ascii_lowercase[i] in return_word(file_name) else 0 for i in range(26)])
+
+            label = []
+            for i in range(26):
+                if string.ascii_lowercase[i] in return_word(file_name) and string.ascii_lowercase[i] not in file_name.split('~')[0]:
+                    label.append(1)
+                else:
+                    label.append(0)
+
+            y.append(label)           
             t += 1
 
     X = np.array(X)
     y = np.array(y)
 
     # Split the data
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.1, random_state=42)
 
     # Generate random example data
     

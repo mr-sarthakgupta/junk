@@ -142,7 +142,7 @@ class HangmanGame:
     def __init__(self, full_dictionary_location='words_train_split.txt'):
 
         self.model = MulticlassHammingClassifier(input_dim=(26, 6), num_classes=26)
-        self.model.load_state_dict(torch.load('models/model_0.2915651202201843.pth'))
+        self.model.load_state_dict(torch.load('models/model_0.1909310519695282.pth'))
         self.model.to('cuda')
 
         self.guessed_letters = []
@@ -389,7 +389,7 @@ class HangmanGame:
             known_letters_count = sum(1 for char in window if char != '.')
             
             # Only apply quadgram scoring if 2 or more letters are known
-            if known_letters_count >= 2:
+            if known_letters_count >= 3:
                 for quadgram in quadgrams_by_frequency:
                     if self.is_quadgram_window_match(window, quadgram):
                         for letter in set(quadgram):
